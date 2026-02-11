@@ -33,9 +33,11 @@ export default function CampaignList() {
       if (filters.platform) params.platform = filters.platform
       if (filters.status) params.status = filters.status
       const res = await getCampaigns(params)
-      setCampaigns(res.data)
+      // Defensive: always set to array
+      setCampaigns(Array.isArray(res.data) ? res.data : [])
     } catch {
       toast.error('Failed to load campaigns')
+      setCampaigns([])
     } finally {
       setLoading(false)
     }
