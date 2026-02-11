@@ -1,0 +1,17 @@
+# Ignore node modules everywhere
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+
+# OS and editor files
+.DS_Store
+
+# Build outputs
+dist/
+build/
+
+# Python caches
+__pycache__/
+*.py[cod]
