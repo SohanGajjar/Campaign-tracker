@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getNewsInspiration } from '../api/campaigns'
 
 const SUGGESTED_QUERIES = [
@@ -24,6 +24,7 @@ function timeAgo(dateStr) {
 export default function NewsInspiration() {
   const [query, setQuery] = useState('social media marketing')
   const [inputVal, setInputVal] = useState('social media marketing')
+  const debounceRef = useRef()
   const [articles, setArticles] = useState([])
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
@@ -45,6 +46,19 @@ export default function NewsInspiration() {
 
   useEffect(() => { fetchNews(query) }, [query])
 
+  // Debounce inputVal changes to auto-search after user stops typing
+  useEffect(() => {
+    if (inputVal.trim() === query) return // Don't re-search if already current
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      if (inputVal.trim() && inputVal.trim() !== query) {
+        setQuery(inputVal.trim())
+      }
+    }, 600) // 600ms debounce
+    return () => clearTimeout(debounceRef.current)
+  }, [inputVal])
+
+  // Keep search button for accessibility, but not required
   const handleSearch = (e) => {
     e.preventDefault()
     if (inputVal.trim()) setQuery(inputVal.trim())
